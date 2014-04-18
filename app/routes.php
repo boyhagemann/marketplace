@@ -13,5 +13,14 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+
 });
+
+Route::bind('resource', function($key) {
+	return Resource::where('key', $key)->firstOrFail();
+});
+
+Route::resource('/resources', 'ResourceController');
+Route::any('/invoke', 'ResourceController@multiple');
+Route::any('/invoke/{resource}', 'ResourceController@invoke');
+Route::any('/resolve/{resource}', 'ResourceController@resolve');
