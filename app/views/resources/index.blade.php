@@ -7,5 +7,14 @@
 		<h2>ID: {{{ $resource['key'] }}}</h2>
 	</header>
 	<pre>{{{ $resource['method'] }}} {{{ $resource['uri'] }}}</pre>
+    <a href="{{ URL::route('resource.edit', $resource->getIdentifier()) }}">Edit</a>
+    
+    {{ Form::open(array('route' => array('resource.destroy', $resource->getIdentifier()), 'method' => 'DELETE')) }}
+    {{ Form::submit('Delete') }}
+    {{ Form::close() }}
 </article>
 @endforeach
+
+<section>
+    <a href="{{ URL::route('resource.create') }}">Create resource</a>
+</section>

@@ -1,9 +1,16 @@
 <?php
 
-class Resource extends \Eloquent {
-	protected $fillable = array();
+class Resource extends \Eloquent implements ModelInterface
+{
+	protected $fillable = array('name', 'uri', 'method');
 
-	public static function boot()
+    public function getIdentifier()
+    {
+        return $this->key;
+    }
+
+
+    public static function boot()
 	{
 		parent::boot();
 
