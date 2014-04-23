@@ -21,6 +21,17 @@ Route::bind('resource', function($key) {
 });
 
 Route::resource('/resource', 'ResourceController');
-Route::any('/invoke', 'ResourceController@multiple');
 Route::any('/invoke/{resource}', 'ResourceController@invoke');
-Route::any('/resolve/{resource}', 'ResourceController@resolve');
+Route::post('/resolve/{resource}', 'ResourceController@resolve');
+
+Route::get('test', function() {
+
+	return API::post('resolve/9IAH54IY', array(
+		'title' => 'Hallo',
+		'news' => array(
+			'source' => '9IAH54IX',
+			'params' => array(),
+		),
+	));
+
+});

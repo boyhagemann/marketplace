@@ -101,29 +101,6 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 	}
 
 	/**
-	 * Call multiple Resources and return a json response
-	 *
-	 * Example: GET /invoke?id=9IAH54IX&id=9IAH54IY
-	 *
-	 * @return Response
-	 * @throws Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
-	 */
-	public function multiple()
-	{
-		if(!Input::has('id')) {
-			throw new \Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
-		}
-
-		foreach( (array) Input::get('id') as $key) {
-
-			$resource = Resource::where('key', $key)->firstOrFail();
-			$response[$key] = $this->invoke($resource);
-		}
-
-		return Response::json($response);
-	}
-
-	/**
 	 * Call a resource and try to resolve it to a html string.
 	 * It uses input parameters that correspond with the variable
 	 * names in the template.
@@ -138,34 +115,33 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 	{
 		// Validation...
 
-		$template = $this->invoke($resource);
-
-		if(is_array($template)) {
-			return Response::json($template);
+		if($resource->type != 'template') {
+			return $this->invoke($resource);
 		}
 
-		$path = storage_path('test.blade.php');
-
-		foreach(Input::all() as $var => $key) {
-
-			try {
-				$resource = Resource::where('key', $key)->firstOrFail();
-				$data[$var] = $this->invoke($resource);
-			}
-			catch(Exception $e) {
-				$data[$var] = $key;
-			}
+		if(!$resource->contract) {
+			throw new Exception(sprintf('Must provide a contract for resource %d', $resource->id));
 		}
 
-		File::put($path, $template);
+		$contract = $this->invoke($resource->contract);
+		$data = array();
 
-		View::addLocation(storage_path());
+		foreach(array_keys($contract) as $key) {
 
-		$html = View::make('test', $data)->render();
+			$input = Input::get($key);
 
-		File::delete($path);
+			if(is_array($input)) {
+				$data[$key] = $this->resolve(Resource::findByKey($input['source']));
+			}
+			else {
+				$data[$key] = $input;
+			}
 
-		return $html;
+		}
+
+		Input::replace($data);
+
+		return $this->invoke($resource);
 	}
 
 }

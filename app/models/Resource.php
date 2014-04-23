@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Class Resource
+ *
+ * @param Resource $contract
+ */
 class Resource extends \Eloquent implements ModelInterface
 {
 	protected $fillable = array('name', 'uri', 'method');
@@ -18,6 +23,20 @@ class Resource extends \Eloquent implements ModelInterface
 		{
 			if(!$route->key) $route->key = Str::random(8);
 		});
+	}
+
+	public function contract()
+	{
+		return $this->belongsTo('Resource', 'contract_id');
+	}
+
+	/**
+	 * @param string $key
+	 * @return Resource
+	 */
+	public static function findByKey($key)
+	{
+		return static::where('key', $key)->firstOrFail();
 	}
 
 }
