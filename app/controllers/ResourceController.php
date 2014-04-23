@@ -97,7 +97,7 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 	 */
 	public function invoke(Resource $resource)
 	{
-		return API::invokeRemote($resource->uri, $resource->method, Input::all());
+		return $this->service->invoke($resource, Input::all());
 	}
 
 	/**
@@ -113,35 +113,7 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 	 */
 	public function resolve(Resource $resource)
 	{
-		// Validation...
-
-		if($resource->type != 'template') {
-			return $this->invoke($resource);
-		}
-
-		if(!$resource->contract) {
-			throw new Exception(sprintf('Must provide a contract for resource %d', $resource->id));
-		}
-
-		$contract = $this->invoke($resource->contract);
-		$data = array();
-
-		foreach(array_keys($contract) as $key) {
-
-			$input = Input::get($key);
-
-			if(is_array($input)) {
-				$data[$key] = $this->resolve(Resource::findByKey($input['source']));
-			}
-			else {
-				$data[$key] = $input;
-			}
-
-		}
-
-		Input::replace($data);
-
-		return $this->invoke($resource);
+		return $this->service->resolve($resource, Input::all());
 	}
 
 }

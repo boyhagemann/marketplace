@@ -35,3 +35,44 @@ Route::get('test', function() {
 	));
 
 });
+
+Route::get('test2', function() {
+
+	return API::post('resolve/12345layout', array(
+		'title' => 'Hallo layout title',
+		'content' => array(
+			array(
+
+				'source' => '9IAH54IY',
+				'params' => array(
+					'title' => 'Hallo',
+					'news' => array(
+						'source' => '9IAH54IX',
+						'params' => array(),
+					),
+				),
+			),
+			array(
+				'source' => '9IAH54IY',
+				'params' => array(
+					'title' => 'Hallo',
+					'news' => array(
+						'source' => '9IAH54IX',
+						'params' => array(),
+					),
+				),
+			),
+		),
+		'sidebar' => array(
+			'source' => '9IAH54IY',
+			'params' => array(
+				'title' => 'Hallo',
+				'news' => array(
+					'source' => '9IAH54IX',
+					'params' => array(),
+				),
+			),
+		),
+	));
+
+});

@@ -32,30 +32,30 @@ class ResourceTableSeeder extends Seeder {
 			'key' => '9IAH54IZ',
 			'method' => 'GET',
 			'type' => 'contract',
-			'uri' => 'http://localhost/resourceprovider/public/contract/news',
+			'uri' => 'http://localhost/resourceprovider/public/contracts/news',
 			'config' => json_encode(array()),
 		));
 
-//		Resource::create(array(
-//			'id' => 4,
-//			'name' => 'Text element view',
-//			'key' => '12345textelement',
-//			'method' => 'POST',
-//			'type' => 'template',
-//			'uri' => 'http://localhost/resourceprovider/public/views/element.text',
-//			'contract_id' => 5,
-//			'config' => json_encode(array()),
-//		));
-//
-//		Resource::create(array(
-//			'id' => 5,
-//			'name' => 'Text element contract',
-//			'key' => '12345textelementcontract',
-//			'method' => 'GET',
-//			'type' => 'contract',
-//			'uri' => 'http://localhost/resourceprovider/public/textelement/contract',
-//			'config' => json_encode(array()),
-//		));
+		Resource::create(array(
+			'id' => 4,
+			'name' => 'Layout view',
+			'key' => '12345layout',
+			'method' => 'POST',
+			'type' => 'template',
+			'uri' => 'http://localhost/resourceprovider/public/views/layouts.default',
+			'contract_id' => 5,
+			'config' => json_encode(array()),
+		));
+
+		Resource::create(array(
+			'id' => 5,
+			'name' => 'Layout contract',
+			'key' => '12345layoutcontract',
+			'method' => 'GET',
+			'type' => 'contract',
+			'uri' => 'http://localhost/resourceprovider/public/contracts/layout',
+			'config' => json_encode(array()),
+		));
 	}
 
 }
