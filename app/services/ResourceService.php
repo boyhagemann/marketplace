@@ -48,9 +48,18 @@ class ResourceService
 	 * @param array    $params
 	 * @return mixed
 	 */
-	public function invoke(Resource $resource, Array $params)
+	public function invoke(Resource $resource, Array $params = array())
 	{
-		return API::invokeRemote($resource->uri, $resource->method, $params);
+        $client = new Guzzle\Http\Client;
+        $request = $client->createRequest($resource->method, $resource->uri, null, $params);
+        $response = $request->send($request);
+        
+        try {
+            return $response->json();
+        }
+        catch(Guzzle\Common\Exception\RuntimeException $e) {
+            return $response->getBody();
+        }
 	}
 
 	/**
@@ -76,14 +85,8 @@ class ResourceService
 			return $this->invoke($resource, $params);
 		}
 
-		// Everey template must have a config that explains which keys needs
-		// to be resolved.
-		if(!$resource->contract) {
-			throw new Exception(sprintf('Must provide a contract for resource %d', $resource->id));
-		}
-
 		// Get the config
-		$contract = $this->invoke($resource->contract, $params);
+		$contract = $this->getContract($resource);
 		$data = array();
 
 		foreach(array_keys($contract) as $key) {
@@ -93,17 +96,17 @@ class ResourceService
 
 			if(is_array($input)) {
 
-				// Start with an empty string and add resolved data to it.
-				$data[$key] = '';
-
 				if(isset($input['source'])) {
 
 					// There is one resource that needs to be resolved
-					$data[$key] .= $this->resolve(Resource::findByKey($input['source']), $input['params']);
+					$data[$key] = $this->resolve(Resource::findByKey($input['source']), $input['params']);
 
 				}
 				else {
 
+                    // Start with an empty string and add resolved data to it.
+                    $data[$key] = '';
+                
 					// The variable in the template needs to be resolved with multiple resources.
 					// Resolve each resource and concatenate the resolved output.
 					foreach($input as $multiple) {
@@ -125,5 +128,30 @@ class ResourceService
 		// the html output.
 		return $this->invoke($resource, $data);
 	}
+    
+    /**
+     * 
+     * @param Resource $resource
+     * @return array
+     * @throws Exception
+     */
+    protected function getContract(Resource $resource)
+    {
+		// Everey template must have a config that explains which keys needs
+		// to be resolved.
+		if(!$resource->contract) {
+			throw new Exception(sprintf('Must provide a contract for resource %d', $resource->id));
+		}
+                
+        if($resource->config) {
+            return $resource->config;
+        }
+        
+		$config = $this->invoke($resource->contract);
+        $resource->config = $config;
+        $resource->save();
+        
+        return $config;
+    }
 
 }

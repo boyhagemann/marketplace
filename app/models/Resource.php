@@ -14,7 +14,6 @@ class Resource extends \Eloquent implements ModelInterface
         return $this->key;
     }
 
-
     public static function boot()
 	{
 		parent::boot();
@@ -25,7 +24,26 @@ class Resource extends \Eloquent implements ModelInterface
 		});
 	}
 
-	public function contract()
+    /**
+     * 
+     * @param string $value
+     * @return array
+     */
+    public function getConfigAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    /**
+     * 
+     * @param array $value
+     */
+    public function setConfigAttribute(Array $value)
+    {
+        $this->attributes['config']  = json_encode($value);
+    }
+
+    public function contract()
 	{
 		return $this->belongsTo('Resource', 'contract_id');
 	}
