@@ -62,6 +62,13 @@ Route::get('test2', function() {
 					),
 				),
 			),
+			array(
+				'source' => '12345form',
+				'params' => array(
+					'target' => '12345newsstore',
+					'title' => 'Create',
+				),
+			)
 		),
 		'sidebar' => array(
 			'source' => '9IAH54IY',
@@ -73,6 +80,31 @@ Route::get('test2', function() {
 				),
 			),
 		),
+	));
+
+});
+
+Route::get('test3', function() {
+
+	return API::post('resolve/12345form', array(
+		'target' => '12345newsstore',
+		'title' => 'Create',
+	));
+
+});
+
+Route::get('test4', function() {
+
+	return API::post('resolve/12345layout', array(
+		'title' => 'Hallo layout title',
+		'content' => array(
+			'source' => '12345form',
+			'params' => array(
+				'target' => '12345newsstore',
+				'title' => 'Create',
+			),
+		),
+		'sidebar' => array(),
 	));
 
 });

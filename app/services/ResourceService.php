@@ -86,8 +86,18 @@ class ResourceService
 		}
 
 		// Get the config
-		$contract = $this->getContract($resource);
+		$contract = $this->getContract($resource, $params);
 		$data = array();
+
+
+		if($resource->contractType) {
+
+			$data = array_merge($params, $contract);
+
+			// There is one resource that needs to be resolved
+			return $this->invoke($resource, $data);
+
+		}
 
 		foreach(array_keys($contract) as $key) {
 
@@ -135,8 +145,14 @@ class ResourceService
      * @return array
      * @throws Exception
      */
-    protected function getContract(Resource $resource)
+    protected function getContract(Resource $resource, Array $params = array())
     {
+		// Get the contract a level deeper
+		if($resource->contractType) {
+			$target = Resource::findByKey($params['target']);
+			return $this->getContract($target);
+		}
+
 		// Everey template must have a config that explains which keys needs
 		// to be resolved.
 		if(!$contract = $resource->contract) {
@@ -152,7 +168,7 @@ class ResourceService
 		$config = $this->invoke($contract->resource);
 		$contract->config = $config;
 		$contract->save();
-        
+
         return $config;
     }
 

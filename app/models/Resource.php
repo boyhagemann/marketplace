@@ -4,6 +4,7 @@
  * Class Resource
  *
  * @param Contract $contract
+ * @param ContractType $contractType
  */
 class Resource extends \Eloquent implements ModelInterface
 {
@@ -44,11 +45,19 @@ class Resource extends \Eloquent implements ModelInterface
     }
 
 	/**
-	 * @return Contract
+	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function contract()
 	{
 		return $this->belongsTo('Contract');
+	}
+
+	/**
+	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function contractType()
+	{
+		return $this->belongsTo('ContractType');
 	}
 
 	/**

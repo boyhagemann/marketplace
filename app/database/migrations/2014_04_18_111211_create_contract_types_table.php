@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateContractsTable extends Migration {
+class CreateContractTypesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,17 +12,15 @@ class CreateContractsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('contracts', function(Blueprint $table)
+		Schema::create('contract_types', function(Blueprint $table)
 		{
 			$table->increments('id');
 			$table->timestamps();
 
-			$table->integer('contract_type_id');
-			$table->integer('resource_id');
-			$table->longText('config');
+			$table->string('title');
+			$table->string('name');
 
-			$table->index('contract_type_id');
-			$table->unique('resource_id');
+			$table->unique('name');
 		});
 	}
 
@@ -34,7 +32,7 @@ class CreateContractsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('contracts');
+		Schema::drop('contract_types');
 	}
 
 }

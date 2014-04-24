@@ -51,6 +51,40 @@ class ResourceTableSeeder extends Seeder {
 			'type' => 'contract',
 			'uri' => 'http://localhost/resourceprovider/public/contracts/layout',
 		));
+
+
+
+
+
+		Resource::create(array(
+			'id' => 6,
+			'name' => 'Contract voor news create',
+			'key' => '12345newscreatecontract',
+			'method' => 'OPTIONS',
+			'type' => 'contract',
+			'contract_id' => 3,
+			'uri' => 'http://localhost/resourceprovider/public/news/create',
+		));
+
+		Resource::create(array(
+			'id' => 7,
+			'name' => 'News store',
+			'key' => '12345newsstore',
+			'method' => 'POST',
+			'type' => 'data',
+			'contract_id' => 3,
+			'uri' => 'http://localhost/resourceprovider/public/news',
+		));
+
+		Resource::create(array(
+			'id' => 8,
+			'name' => 'Form',
+			'key' => '12345form',
+			'method' => 'POST',
+			'type' => 'template',
+			'contract_type_id' => 1,
+			'uri' => 'http://localhost/resourceprovider/public/views/form',
+		));
 	}
 
 }

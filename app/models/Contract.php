@@ -20,10 +20,15 @@ class Contract extends \Eloquent implements ModelInterface
 
 		Contract::saving(function($contract)
 		{
+			if(!$contract->config) {
+				return;
+			}
+
+			$name = $contract->type->name;
 			$v = Validator::make($contract->toArray(), array(
-				'config' => $contract->type
+				'config' => $name
 			), array(
-				$contract->type => 'Contract config is not valid'
+				$name => 'Contract config is not valid'
 			));
 
 			if($v->fails()) {
@@ -53,11 +58,19 @@ class Contract extends \Eloquent implements ModelInterface
     }
 
 	/**
-	 * @return Illuminate\Database\Eloquent\Collection
+	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
 	public function resource()
 	{
 		return $this->belongsTo('Resource');
+	}
+
+	/**
+	 * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function type()
+	{
+		return $this->belongsTo('ContractType', 'contract_type_id');
 	}
 
 }
