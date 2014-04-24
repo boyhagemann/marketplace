@@ -113,7 +113,22 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 	 */
 	public function resolve(Resource $resource)
 	{
-		return $this->service->resolve($resource, Input::all());
+		try {
+			$response = array(
+				'data' => $this->service->resolve($resource, Input::all()),
+				'status' => 'success',
+			);
+		}
+		catch(Exception $e) {
+			$response = array(
+				'status' => 'error',
+				'data' => $e->getMessage(),
+			);
+		}
+
+		return Request::ajax()
+			? Response::json($response)
+			: $response['data'];
 	}
 
 }

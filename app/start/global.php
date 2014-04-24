@@ -79,3 +79,49 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+
+
+
+Validator::extend('template', function($attribute, $value) {
+
+	if(!is_array($value)) {
+		return false;
+	}
+
+	foreach($value as $variable => $params) {
+
+		if(!is_string($variable)) {
+			return false;
+		}
+
+		if(!is_array($params)) {
+			return false;
+		}
+
+		if(!isset($params['contract'])) {
+			return false;
+		}
+
+		foreach($params as $key => $value) {
+
+			if(!is_string($key)) {
+				return false;
+			}
+
+		}
+	}
+
+	return true;
+});
+
+Validator::extend('list', function($attribute, $value) {
+
+	return true;
+});
+
+Validator::extend('form', function($attribute, $value) {
+
+	return true;
+});

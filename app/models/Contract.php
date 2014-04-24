@@ -14,6 +14,25 @@ class Contract extends \Eloquent implements ModelInterface
         return $this->id;
     }
 
+	public static function boot()
+	{
+		parent::boot();
+
+		Contract::saving(function($contract)
+		{
+			$v = Validator::make($contract->toArray(), array(
+				'config' => $contract->type
+			), array(
+				$contract->type => 'Contract config is not valid'
+			));
+
+			if($v->fails()) {
+				throw new Exception($v->messages()->first('config'));
+			}
+
+		});
+	}
+
     /**
      * 
      * @param string $value
