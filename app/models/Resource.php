@@ -3,7 +3,7 @@
 /**
  * Class Resource
  *
- * @param Resource $contract
+ * @param Contract $contract
  */
 class Resource extends \Eloquent implements ModelInterface
 {
@@ -43,9 +43,12 @@ class Resource extends \Eloquent implements ModelInterface
         $this->attributes['config']  = json_encode($value);
     }
 
-    public function contract()
+	/**
+	 * @return Contract
+	 */
+	public function contract()
 	{
-		return $this->belongsTo('Resource', 'contract_id');
+		return $this->belongsTo('Contract');
 	}
 
 	/**

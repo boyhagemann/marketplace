@@ -139,17 +139,19 @@ class ResourceService
     {
 		// Everey template must have a config that explains which keys needs
 		// to be resolved.
-		if(!$resource->contract) {
+		if(!$contract = $resource->contract) {
 			throw new Exception(sprintf('Must provide a contract for resource %d', $resource->id));
 		}
-                
-        if($resource->config) {
-            return $resource->config;
+
+		// Does this contract already has a 'cached' config? No need to invoke, just return it.
+        if($contract->config) {
+            return $contract->config;
         }
-        
-		$config = $this->invoke($resource->contract);
-        $resource->config = $config;
-        $resource->save();
+
+		// Get the config data from the contract resource and 'cache' it
+		$config = $this->invoke($contract->resource);
+		$contract->config = $config;
+		$contract->save();
         
         return $config;
     }

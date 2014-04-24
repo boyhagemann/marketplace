@@ -23,7 +23,6 @@ class CreateResourcesTable extends Migration {
 			$table->enum('method', array('GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'));
 			$table->string('uri');
 			$table->integer('contract_id')->nullable();
-			$table->longText('config');
 
 			$table->unique('key');
 			$table->index('type');

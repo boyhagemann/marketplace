@@ -10,9 +10,8 @@ class ResourceTableSeeder extends Seeder {
 			'key' => '9IAH54IX',
 			'method' => 'GET',
 			'type' => 'data',
+			'contract_id' => 1,
 			'uri' => 'http://localhost/resourceprovider/public/news',
-			'contract_id' => 3,
-			'config' => json_encode(array()),
 		));
 
 		Resource::create(array(
@@ -21,9 +20,8 @@ class ResourceTableSeeder extends Seeder {
 			'key' => '9IAH54IY',
 			'method' => 'POST',
 			'type' => 'template',
+			'contract_id' => 1,
 			'uri' => 'http://localhost/resourceprovider/public/views/news-index',
-			'contract_id' => 3,
-			'config' => json_encode(array()),
 		));
 
 		Resource::create(array(
@@ -33,7 +31,6 @@ class ResourceTableSeeder extends Seeder {
 			'method' => 'GET',
 			'type' => 'contract',
 			'uri' => 'http://localhost/resourceprovider/public/contracts/news',
-			'config' => json_encode(array()),
 		));
 
 		Resource::create(array(
@@ -42,9 +39,8 @@ class ResourceTableSeeder extends Seeder {
 			'key' => '12345layout',
 			'method' => 'POST',
 			'type' => 'template',
+			'contract_id' => 2,
 			'uri' => 'http://localhost/resourceprovider/public/views/layouts.default',
-			'contract_id' => 5,
-			'config' => json_encode(array()),
 		));
 
 		Resource::create(array(
@@ -54,7 +50,6 @@ class ResourceTableSeeder extends Seeder {
 			'method' => 'GET',
 			'type' => 'contract',
 			'uri' => 'http://localhost/resourceprovider/public/contracts/layout',
-			'config' => json_encode(array()),
 		));
 	}
 
