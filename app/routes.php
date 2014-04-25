@@ -51,16 +51,19 @@ Route::get('test2', function() {
 					),
 				),
 			),
+			array(
+				'source' => '12345form',
+				'params' => array(
+					'target' => '12345newsstore',
+					'title' => 'Create',
+				),
+			)
 		),
 		'sidebar' => array(
 			array(
 				'source' => '12345form',
 				'params' => array(
 					'target' => '12345newsstore',
-					'success' => array(
-						'redirect' => URL::to('test2'),
-						'message' => 'Data stored',
-					),
 					'title' => 'Create',
 				),
 			)
