@@ -42,7 +42,6 @@ Route::get('test2', function() {
 		'title' => 'Hallo layout title',
 		'content' => array(
 			array(
-
 				'source' => '9IAH54IY',
 				'params' => array(
 					'title' => 'Hallo',
@@ -52,16 +51,8 @@ Route::get('test2', function() {
 					),
 				),
 			),
-			array(
-				'source' => '9IAH54IY',
-				'params' => array(
-					'title' => 'Hallo',
-					'news' => array(
-						'source' => '9IAH54IX',
-						'params' => array(),
-					),
-				),
-			),
+		),
+		'sidebar' => array(
 			array(
 				'source' => '12345form',
 				'params' => array(
@@ -73,16 +64,6 @@ Route::get('test2', function() {
 					'title' => 'Create',
 				),
 			)
-		),
-		'sidebar' => array(
-			'source' => '9IAH54IY',
-			'params' => array(
-				'title' => 'Hallo',
-				'news' => array(
-					'source' => '9IAH54IX',
-					'params' => array(),
-				),
-			),
 		),
 	));
 
