@@ -22,6 +22,12 @@ class ContractTypeTableSeeder extends Seeder {
 			'name' => 'template',
 		));
 
+		ContractType::create(array(
+			'id' => 4,
+			'title' => 'Transformer',
+			'name' => 'transformer',
+		));
+
 	}
 
 }

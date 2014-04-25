@@ -125,3 +125,8 @@ Validator::extend('form', function($attribute, $value) {
 
 	return true;
 });
+
+Validator::extend('transformer', function($attribute, $value) {
+
+	return true;
+});

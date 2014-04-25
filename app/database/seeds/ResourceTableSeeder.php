@@ -82,8 +82,18 @@ class ResourceTableSeeder extends Seeder {
 			'key' => '12345form',
 			'method' => 'POST',
 			'type' => 'template',
+			'contract_id' => 4,
 			'contract_type_id' => 1,
 			'uri' => 'http://localhost/resourceprovider/public/views/form',
+		));
+
+		Resource::create(array(
+			'id' => 9,
+			'name' => 'Form contract',
+			'key' => '12345formcontract',
+			'method' => 'GET',
+			'type' => 'contract',
+			'uri' => 'http://localhost/resourceprovider/public/contracts/form',
 		));
 	}
 

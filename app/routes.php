@@ -66,6 +66,10 @@ Route::get('test2', function() {
 				'source' => '12345form',
 				'params' => array(
 					'target' => '12345newsstore',
+					'success' => array(
+						'redirect' => URL::to('test2'),
+						'message' => 'Data stored',
+					),
 					'title' => 'Create',
 				),
 			)
@@ -107,4 +111,51 @@ Route::get('test4', function() {
 		'sidebar' => array(),
 	));
 
+});
+
+
+class RedirectException extends Exception
+{
+	protected $response;
+
+	public function __construct(Symfony\Component\HttpFoundation\Response $response)
+	{
+		$this->response = $response;
+	}
+
+	public function getResponse()
+	{
+		return $this->response;
+	}
+}
+
+Event::listen('invoke.response', function(Resource $resource, Array $params, Guzzle\Http\Message\Response $response) {
+
+	$hooks = array(
+		array(
+			'resource' => '12345newsstore',
+			'redirect' => URL::to('test2'),
+		)
+	);
+
+	foreach($hooks as $data) {
+
+		if($data['resource'] != $resource->key) {
+			continue;
+		}
+
+
+		if($response->isSuccessful()) {
+			$response = Redirect::to($data['redirect']);
+			throw new RedirectException($response);
+		}
+
+	}
+
+});
+
+
+App::error(function(RedirectException $e)
+{
+	return $e->getResponse();
 });

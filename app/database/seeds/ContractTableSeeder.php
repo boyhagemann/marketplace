@@ -24,6 +24,13 @@ class ContractTableSeeder extends Seeder {
 			'contract_type_id' => 1,
 			'config' => array(),
 		));
+
+		Contract::create(array(
+			'id' => 4,
+			'resource_id' => 9,
+			'contract_type_id' => 4,
+			'config' => array(),
+		));
 	}
 
 }

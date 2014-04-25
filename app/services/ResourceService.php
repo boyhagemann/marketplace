@@ -53,7 +53,9 @@ class ResourceService
         $client = new Guzzle\Http\Client;
         $request = $client->createRequest($resource->method, $resource->uri, null, $params);
         $response = $request->send($request);
-        
+
+		Event::fire('invoke.response', array($resource, $params, $response));
+
         try {
             return $response->json();
         }
@@ -77,8 +79,6 @@ class ResourceService
 	 */
 	public function resolve(Resource $resource, Array $params)
 	{
-		// Validation...
-
 		// If the resource is not of type template, then we can just call
 		// the simple invoke method and skip the recursive resolve process.
 		if($resource->type != 'template') {
@@ -87,72 +87,56 @@ class ResourceService
 
 		// Get the config
 		$contract = $this->getContract($resource, $params);
-		$data = array();
 
+		switch($contract->type->name) {
 
-		if($resource->contractType) {
+			case 'form':
+				$resolver = new TemplateResolver();
+				break;
 
-			$data = array_merge($params, $contract);
+			case 'list':
+				$resolver = new TemplateResolver();
+				break;
 
-			// There is one resource that needs to be resolved
-			return $this->invoke($resource, $data);
+			case 'template':
+				$resolver = new TemplateResolver();
+				break;
 
+			case 'transformer':
+				$resolver = new TransformerResolver();
+				break;
 		}
 
-		foreach(array_keys($contract) as $key) {
+		return $resolver->resolve($this, $resource, $contract, $params);
+	}
 
-			// Check if there is input. If not, we just use an empty string in the template.
-			$input = isset($params[$key]) ? $params[$key] : '';
-
-			if(is_array($input)) {
-
-				if(isset($input['source'])) {
-
-					// There is one resource that needs to be resolved
-					$data[$key] = $this->resolve(Resource::findByKey($input['source']), $input['params']);
-
-				}
-				else {
-
-                    // Start with an empty string and add resolved data to it.
-                    $data[$key] = '';
-                
-					// The variable in the template needs to be resolved with multiple resources.
-					// Resolve each resource and concatenate the resolved output.
-					foreach($input as $multiple) {
-						$data[$key] .= $this->resolve(Resource::findByKey($multiple['source']), $multiple['params']);
-					}
-				}
-
-			}
-			else {
-
-				// No data needs to be resolved, we can use the input directly
-				$data[$key] = $input;
-			}
-
+	/**
+	 * @param $input
+	 * @param Contract $contract
+	 * @return string
+	 */
+	public function resolveInput(Array $input, Contract $contract)
+	{
+		if(!isset($input['source'])) {
+			throw new Exception('The "source" data for template is missing');
 		}
 
-		// Now we have all child resources resolved and collected all data.
-		// We can call the parent template resource with the data and return
-		// the html output.
-		return $this->invoke($resource, $data);
+		if(!isset($input['params'])) {
+			throw new Exception('The "params" data for template is missing');
+		}
+
+		$source = Resource::findByKey($input['source']);
+		return $this->resolve($source, $input['params']);
 	}
     
     /**
      * 
      * @param Resource $resource
-     * @return array
+     * @return Contract
      * @throws Exception
      */
-    protected function getContract(Resource $resource, Array $params = array())
+    public function getContract(Resource $resource)
     {
-		// Get the contract a level deeper
-		if($resource->contractType) {
-			$target = Resource::findByKey($params['target']);
-			return $this->getContract($target);
-		}
-
 		// Everey template must have a config that explains which keys needs
 		// to be resolved.
 		if(!$contract = $resource->contract) {
@@ -161,7 +145,7 @@ class ResourceService
 
 		// Does this contract already has a 'cached' config? No need to invoke, just return it.
         if($contract->config) {
-            return $contract->config;
+            return $contract;
         }
 
 		// Get the config data from the contract resource and 'cache' it
@@ -169,7 +153,114 @@ class ResourceService
 		$contract->config = $config;
 		$contract->save();
 
-        return $config;
+        return $contract;
     }
 
+}
+
+interface ResourceResolverInterface
+{
+	public function resolve(ResourceService $service, Resource $resource, Contract $contract, Array $params);
+}
+
+class ListResolver implements ResourceResolverInterface
+{
+	public function resolve(ResourceService $service, Resource $resource, Contract $contract, Array $params)
+	{
+		return 'listed';
+		dd($params);
+	}
+}
+
+class FormResolver implements ResourceResolverInterface
+{
+	public function resolve(ResourceService $service, Resource $resource, Contract $contract, Array $params)
+	{
+		return 'formed';
+		dd($params);
+	}
+}
+
+class TemplateResolver implements ResourceResolverInterface
+{
+	/**
+	 * @param ResourceService $service
+	 * @param Resource        $resource
+	 * @param Contract        $contract
+	 * @param array           $params
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function resolve(ResourceService $service, Resource $resource, Contract $contract, Array $params)
+	{
+		$data = array();
+
+		foreach(array_keys($contract->config) as $variable) {
+
+			if(!isset($params[$variable])) {
+				throw new Exception(sprintf('The template config misses the "%s" data', $variable));
+			}
+
+			$input = $params[$variable];
+
+			$data[$variable] = $this->resolveInput($service, $input, $contract);
+		}
+
+		return $service->invoke($resource, $data);
+	}
+
+	/**
+	 * @param ResourceService $service
+	 * @param array|string    $input
+	 * @param Contract        $contract
+	 * @return string
+	 */
+	protected function resolveInput(ResourceService $service, $input, Contract $contract)
+	{
+		if(is_string($input)) {
+			return $input;
+		}
+
+		if(!is_array($input)) {
+			throw new Exception('Config needs a "source"');
+		}
+
+
+		if(isset($input['source'])) {
+			return $service->resolveInput($input, $contract);
+		}
+		else {
+			$data = '';
+			foreach($input as $multiple) {
+				$data .= $service->resolveInput($multiple, $contract);
+			}
+			return $data;
+		}
+
+	}
+
+}
+
+class TransformerResolver implements ResourceResolverInterface
+{
+	/**
+	 * @param ResourceService $service
+	 * @param Resource        $resource
+	 * @param Contract        $contract
+	 * @param array           $params
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function resolve(ResourceService $service, Resource $resource, Contract $contract, Array $params)
+	{
+		if(!isset($params['target'])) {
+			throw new Exception('The "target" data for transformer is missing');
+		}
+
+		$target = Resource::findByKey($params['target']);
+		$config = $service->getContract($target)->config;
+		$data = array_merge($params, $config);
+
+		return $service->invoke($resource, $data);
+	}
 }
