@@ -49,7 +49,7 @@ class ResourceTableSeeder extends Seeder {
 			'key' => '12345layoutcontract',
 			'method' => 'GET',
 			'type' => 'contract',
-			'uri' => 'http://localhost/resourceprovider/public/contracts/layout',
+			'uri' => 'http://localhost/resourceprovider/public/views/layouts.default',
 		));
 
 
@@ -94,6 +94,15 @@ class ResourceTableSeeder extends Seeder {
 			'method' => 'GET',
 			'type' => 'contract',
 			'uri' => 'http://localhost/resourceprovider/public/contracts/form',
+		));
+
+		Resource::create(array(
+			'id' => 10,
+			'name' => 'Texteditor',
+			'key' => '12345text',
+			'method' => 'POST',
+			'type' => 'template',
+			'uri' => 'http://localhost/resourceprovider/public/texteditor',
 		));
 	}
 

@@ -20,5 +20,10 @@ Route::bind('resource', function($key) {
 	return Resource::where('key', $key)->firstOrFail();
 });
 
-Route::resource('/resource', 'ResourceController');
-Route::any('/invoke/{resource}', 'ResourceController@invoke');
+
+Route::resource('resource', 'ResourceController');
+Route::any('invoke/{resource}', 'ResourceController@invoke');
+Route::get('config/{resource}', 'ResourceController@config');
+Route::get('refresh/{resource}', 'ResourceController@refresh');
+
+Route::resource('/contract', 'ContractController');

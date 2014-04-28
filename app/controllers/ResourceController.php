@@ -100,4 +100,25 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 		return $this->service->invoke($resource, Input::all());
 	}
 
+	/**
+	 * @param Resource $resource
+	 * @return array
+	 */
+	public function config(Resource $resource)
+	{
+		return $resource->contract ? $resource->contract->config : array();
+	}
+
+	/**
+	 * @param Resource $resource
+	 * @return string
+	 */
+	public function refresh(Resource $resource)
+	{
+		$contract = $resource->contract;
+		$contract->config = $this->service->invoke($contract->resource);
+		$contract->save();
+
+		return 'refreshed';
+	}
 }
