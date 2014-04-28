@@ -21,4 +21,4 @@ Route::bind('resource', function($key) {
 });
 
 Route::resource('/resource', 'ResourceController');
-Route::post('/invoke/{resource}', 'ResourceController@invoke');
+Route::any('/invoke/{resource}', 'ResourceController@invoke');
