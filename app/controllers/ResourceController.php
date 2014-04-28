@@ -100,35 +100,4 @@ class ResourceController extends \BaseController implements StoreInterface, Upda
 		return $this->service->invoke($resource, Input::all());
 	}
 
-	/**
-	 * Call a resource and try to resolve it to a html string.
-	 * It uses input parameters that correspond with the variable
-	 * names in the template.
-	 *
-	 * If the input variable is a Resource id, then that view
-	 * variable will be filled with the invoked Resource.
-	 *
-	 * @param Resource $resource
-	 * @return string
-	 */
-	public function resolve(Resource $resource)
-	{
-		try {
-			$response = array(
-				'data' => $this->service->resolve($resource, Input::all()),
-				'status' => 'success',
-			);
-		}
-		catch(Exception $e) {
-			$response = array(
-				'status' => 'error',
-				'data' => $e->getMessage(),
-			);
-		}
-
-		return Request::ajax()
-			? Response::json($response)
-			: $response['data'];
-	}
-
 }
